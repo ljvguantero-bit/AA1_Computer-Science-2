@@ -1,0 +1,186 @@
+"""
+Liam Jazz V. Guantero
+Grade 8 - Ilang-Ilang
+Program Description: This program calculates the final weighted grade based on 5 Formative
+Assessments (30%), Long Test (30%), Practical Test (30%), and an Initial Project Proposal (10%).
+"""
+
+
+def display_header():
+    print("=============================================")
+    print("     FINAL GRADE CALCULATOR☆*:.｡.o(≧▽≦)o.｡.:*☆")
+    print("=============================================")
+
+
+def get_valid_score(prompt, max_score):
+    # Keep asking until the user gives a number that makes sense
+    while True:
+        try:
+            score = int(input(prompt))
+
+            # Score shouldn't be negative or higher than the highest possible score
+            if 0 <= score <= max_score:
+                return score
+            print(
+                f"Invalid input! Score must be between 0 and {max_score}ᕙ(⇀‸`‶)ᕗ"
+            )
+        except ValueError:
+            print(
+                "Invalid input! Please enter a valid integer scoreᕙ(⇀‸`‶)ᕗ"
+            )
+
+
+def get_valid_student_name():
+    # Make sure the user doesn't just leave the name empty
+    while True:
+        name = input("Enter Student Name｡ﾟ( ﾟ^∀^ﾟ)ﾟ｡: ").strip()
+        if name != "":
+            return name
+        print("Invalid input! Student name cannot be blank.ᕙ(⇀‸`‶)ᕗ")
+
+
+def get_valid_student_id():
+    # Check if the ID matches the G8-#### format
+    while True:
+        student_id = (
+            input("Enter Student ID (e.g., G8-1025)｡ﾟ( ﾟ^∀^ﾟ)ﾟ｡: ")
+            .strip()
+            .upper()
+        )
+
+        # Has to start with 'G8-', have 7 characters total, and end with 4 numbers
+        if (
+            student_id.startswith("G8-")
+            and len(student_id) == 7
+            and student_id[3:].isdigit()
+        ):
+            return student_id
+        print(
+            "Invalid ID format! Must follow pattern 'G8-####' (e.g., G8-1025)"
+            " ᕙ(⇀‸`‶)ᕗ"
+        )
+
+
+def calculate_grade(fa_scores, lt_score, pt_score, proposal_score):
+    # Step 1: Add up all the FA scores (out of 135 total) and convert to percentage
+    fa_total = sum(fa_scores)
+    fa_max_total = 135
+    fa_pct = (fa_total / fa_max_total) * 100
+
+    # Step 2: Convert the other test scores to percentages
+    lt_pct = (lt_score / 50) * 100
+    pt_pct = (pt_score / 60) * 100
+    proposal_pct = (proposal_score / 100) * 100
+
+    # Step 3: Multiply each category percentage by its weight and total them up
+    # FA = 30%, LT = 30%, PT = 30%, Proposal = 10%
+    final_grade = (
+        (fa_pct * 0.30)
+        + (lt_pct * 0.30)
+        + (pt_pct * 0.30)
+        + (proposal_pct * 0.10)
+    )
+    return final_grade
+
+
+def get_adjectival_rating(grade):
+    # Round the grade so it's easier to match with the rating scale
+    rounded_grade = round(grade, 2)
+
+    if rounded_grade >= 90:
+        return "Excellent"
+    elif rounded_grade >= 85:
+        return "Very Good °˖✧◝(⁰▿⁰)◜✧˖°"
+    elif rounded_grade >= 80:
+        return "Good ☆ ～('▽^人)"
+    elif rounded_grade >= 75:
+        return "Satisfactory o( ❛ᴗ❛ )o"
+    else:
+        return "Needs Improvement! Let's Work on it (っ˘ω˘ς )"
+
+
+def display_results(
+    name,
+    student_id,
+    fa_scores,
+    lt_score,
+    pt_score,
+    proposal_score,
+    final_grade,
+    rating,
+):
+    fa_max_scores = [30, 30, 25, 30, 20]
+
+    # Print out the summary report
+    print("\n=============================================")
+    print("        FINAL GRADE CALCULATOR")
+    print("=============================================")
+    print(f"Student Name >> {name}")
+    print(f"Student ID: {student_id}")
+
+    # Loop through to print each FA score next to its max score
+    for i in range(len(fa_scores)):
+        print(f"Machine Problem {i + 1}: {fa_scores[i]}/{fa_max_scores[i]}")
+
+    print(f"Long Test 1: {lt_score}/50")
+    print(f"Long Test 2 / Practical Test: {pt_score}/60")
+    print(f"Initial Project Proposal: {proposal_score}/100")
+    print("---------------------------------------------")
+    print(f"Final Weighted Average: {final_grade:.2f}%")
+    print(f"Adjectival Rating: {rating}")
+    print("=============================================")
+
+
+def main():
+    display_header()
+
+    # Step 1: Get the student's name and ID number
+    name = get_valid_student_name()
+    student_id = get_valid_student_id()
+
+    print("\n--- Enter Assessment Scores ---")
+
+    # Step 2: Loop 5 times to get scores for all 5 Formative Assessments
+    fa_max_scores = [30, 30, 25, 30, 20]
+    fa_scores = []
+
+    for i in range(len(fa_max_scores)):
+        max_pts = fa_max_scores[i]
+        score = get_valid_score(
+            f"Enter Formative Assessment {i + 1} score (0-{max_pts}): ",
+            max_pts,
+        )
+        fa_scores.append(score)
+
+    # Step 3: Get scores for the rest of the assessments
+    lt_score = get_valid_score(
+        "Enter Long Test 1 score o(≧▽≦)o (0-50): ", 50
+    )
+    pt_score = get_valid_score(
+        "Enter Practical Test score o(≧▽≦)o (0-60): ", 60
+    )
+    proposal_score = get_valid_score(
+        "Enter Initial Project Proposal score o(≧▽≦)o (0-100): ", 100
+    )
+
+    # Step 4: Run the math to compute final grade and rating
+    final_grade = calculate_grade(
+        fa_scores, lt_score, pt_score, proposal_score
+    )
+    rating = get_adjectival_rating(final_grade)
+
+    # Step 5: Print out the final grade card
+    display_results(
+        name,
+        student_id,
+        fa_scores,
+        lt_score,
+        pt_score,
+        proposal_score,
+        final_grade,
+        rating,
+    )
+
+
+if __name__ == "__main__":
+    main()
